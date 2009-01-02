@@ -1,13 +1,46 @@
 Consent
 =======
 
-Introduction goes here.
+Consent is an access control abstraction layer for ActionController. It lets you restrict access
+to actions across your application using a single rules file, rather than scattering access
+logic across your controllers using verify() and method-specific logic. It acts as a single
+before_filter to all your controllers and checks whether an action can run according to the
+rules you've set.
 
 
-Example
-=======
+Examples
+========
 
-Example goes here.
+On installation, Consent adds a file to your app at config/consent.rb. This file is where you
+write the access control rules for your application. You should see a block beginning:
+
+  Consent.rules do
+
+You should write all your rules inside this block. In general, rules are defined using the
+controller and action name, and a block that should return true/false. The block will have
+access to the +request+, +params+ and +session+ objects that you would find in the controller,
+so you can use these to determine whether the action should run (true) or be blocked (false).
+
+For example, say you had an action SiteController#hello, and you wanted to restrict it so
+that it could only be accessed using Ajax requests. The rule for that would be:
+
+  site.hello { request.xhr? }
+
+You can optionally set parameters to narrow the scope of the rule. Say we only want this
+check to take place if the param "id" is set to 12:
+
+  site.hello(:id => 12) { request.xhr? }
+
+Parameter values do not have to be exact values, they can also be ranges or regexes:
+
+  site.hello(:name => /foo/i, :id => 4..17) { request.xhr? }
+
+For a rule to apply, all the parameters listed must be present in the request. When a request
+is made, all the rules that match it are checked and if any of them return false, the request
+is denied.
 
 
-Copyright (c) 2009 [name of plugin creator], released under the MIT license
+Copyright
+=========
+
+Copyright (c) 2009 James Coglan, released under the MIT license
