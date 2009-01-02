@@ -26,8 +26,9 @@ module Consent
     end
     
     def http_restrict(verb)
+      name = @name
       controller_class.class_eval do
-        verify  :method => verb, :only => @name,
+        verify  :method => verb, :only => name,
                 :render => DENIAL_RESPONSE
       end
     end

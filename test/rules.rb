@@ -6,5 +6,11 @@ Consent.rules do
   site.goodbye(:id => "twelve") { false }
   site.goodbye(:id => /foo/i) { false }
   
+  get     site.hello,
+          http.index
+  post    http.update
+  put     http.create
+  delete  http.delete
+  
 end
 
