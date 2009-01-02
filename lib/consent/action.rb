@@ -11,6 +11,10 @@ module Consent
       @controller.controller_class
     end
     
+    def module=(name)
+      @controller.module = name
+    end
+    
     def matches?(context)
       p = context.params
       @controller.name == p[:controller].to_s &&

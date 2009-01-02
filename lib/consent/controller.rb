@@ -8,7 +8,16 @@ module Consent
     end
     
     def controller_class
-      Kernel.const_get("#{ @name.camelcase }Controller")
+      "#{ @name }_controller".split('/').inject(Kernel) { |mod, name| mod.const_get(name.camelcase) }
+    end
+    
+    def /(action)
+      action.module = @name
+      action
+    end
+    
+    def module=(name)
+      @name = "#{ name }/#{ @name }"
     end
     
     def method_missing(name, params = nil, &block)
