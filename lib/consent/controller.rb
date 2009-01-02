@@ -1,10 +1,10 @@
 module Consent
   class Controller
     
-    attr_reader :name
+    attr_reader :name, :params
     
-    def initialize(description, name)
-      @description, @name = description, name.to_s
+    def initialize(description, name, params = nil)
+      @description, @name, @params = description, name.to_s, params || {}
     end
     
     def controller_class

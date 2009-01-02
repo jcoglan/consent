@@ -13,29 +13,39 @@ class ConsentTest < ActionController::TestCase
   test "allowed" do
     get :hello and assert_response :success
     get :goodbye, :id => 10 and assert_response :success
+    get :hello, :id => "sometimes" and assert_response :success
+    get :goodbye, :id => 87 and assert_response :success
     get :goodbye, :id => "nothing" and assert_response :success
+    get :goodbye, :id => "fubar" and assert_response :success
   end
   
   test "denied" do
-    get :hello, :id => "something" and assert_response 403
     get :goodbye, :id => 12 and assert_response 403
     get :goodbye, :id => 50 and assert_response 403
     get :goodbye, :id => "food" and assert_response 403
     post :hello and assert_response 403
+    get :hello, :id => "fubar" and assert_response 403
+    get :hello, :id => 86 and assert_response 403
+    get :goodbye, :id => 86 and assert_response 403
+    get :goodbye, :id => "never" and assert_response 403
+    get :hello, :id => "never" and assert_response 403
+    get :goodbye, :id => "fubar", :name => "Jimmy" and assert_response 403
   end
 end
 
 class HttpTest < ActionController::TestCase
   tests HttpController
   
-  def test_allowed
+  test "allowed" do
     get :index and assert_response :success
+    get :index, :id => "allowed" and assert_response :success
     post :update and assert_response :success
     put :create and assert_response :success
     delete :delete and assert_response :success
   end
   
-  def test_denied
+  test "denied" do
+    get :index, :id => "fubar" and assert_response 403
     post :index and assert_response 403
     put :update and assert_response 403
     delete :create and assert_response 403

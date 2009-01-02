@@ -4,9 +4,13 @@ module Consent
     attr_reader :rules
     
     def method_missing(name, params = nil, &block)
-      controller = Controller.new(self, name)
-      add_rule(Action.new(controller, "", params), &block) if block_given?
+      controller = Controller.new(self, name, params)
+      add_rule(controller, &block) if block_given?
       controller
+    end
+    
+    def restrict(*list, &block)
+      list.each { |item| add_rule(item, &block) }
     end
     
     %w(get post put head delete).each do |verb|
@@ -17,6 +21,7 @@ module Consent
     
     def add_rule(action, &block)
       @rules ||= []
+      action = Action.new(action, "", action.params) unless Action === action
       @rules << Rule.new(action, block)
     end
     
