@@ -48,8 +48,8 @@ the method name to get a rule for all actions in a controller.
 === One rule, multiple actions
 
 You may want to use a single piece of logic to restrict access to several actions. To do
-this, use the +restrict+ method. This takes one or more action expressions and a block.
-Consent will apply the block to all actions listed when a request is made. For example,
+this, use the <tt>+</tt> operator. This combines multiple action expressions into one, and
+assigns the block to all the actions matched by the list of expressions. For example,
 this rule checks that the request uses POST for the following requests:
 
 * Any request to <tt>SiteController#hello</tt>
@@ -57,11 +57,10 @@ this rule checks that the request uses POST for the following requests:
 * Any request to any action in <tt>ProfilesController</tt>
 * Requests to any action in <tt>UsersController</tt> where +name+ is <tt>"jcoglan"</tt>
 
-    restrict(
-      site.hello,
-      site.goodbye(:id => /^[a-z]*$/i),
-      profiles,
-      users(:name => 'jcoglan') ) { request.post? }
+    site.hello                        +
+    site.goodbye(:id => /^[a-z]*$/i)  +
+    profiles                          +
+    users(:name => 'jcoglan') { request.post? }
 
 
 === Nested controllers

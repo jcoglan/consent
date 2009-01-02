@@ -5,7 +5,7 @@ module Consent
     
     def method_missing(name, params = nil, &block)
       controller = Controller.new(self, name, params)
-      add_rule(controller, &block) if block_given?
+      add_rule(controller, &block) and return block if block_given?
       controller
     end
     

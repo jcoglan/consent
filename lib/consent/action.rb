@@ -11,6 +11,13 @@ module Consent
       @controller.controller_class
     end
     
+    def +(expression)
+      expr = Expressions.new(description)
+      expr << self
+      expr << expression
+      expr
+    end
+    
     def module=(name)
       @controller.module = name
     end
@@ -31,6 +38,12 @@ module Consent
         verify  :method => verb, :only => name,
                 :render => DENIAL_RESPONSE
       end
+    end
+    
+  private
+    
+    def description
+      @controller.description
     end
     
   end

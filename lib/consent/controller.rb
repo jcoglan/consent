@@ -1,7 +1,7 @@
 module Consent
   class Controller
     
-    attr_reader :name
+    attr_reader :description, :name
     
     def initialize(description, name, params = nil)
       @description, @name, @params = description, name.to_s, params || {}
@@ -20,13 +20,20 @@ module Consent
       action
     end
     
+    def +(expression)
+      expr = Expressions.new(@description)
+      expr << self
+      expr << expression
+      expr
+    end
+    
     def module=(name)
       @name = "#{ name }/#{ @name }"
     end
     
     def method_missing(name, params = nil, &block)
       action = Action.new(self, name, params)
-      @description.add_rule(action, &block) if block_given?
+      @description.add_rule(action, &block) and return block if block_given?
       action
     end
     
