@@ -21,7 +21,6 @@ module Consent
     
     def add_rule(action, &block)
       @rules ||= []
-      action = Action.new(action, "", action.params) unless Action === action
       @rules << Rule.new(action, block)
     end
     

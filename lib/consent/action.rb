@@ -1,7 +1,7 @@
 module Consent
   class Action
     
-    attr_reader :name, :params
+    attr_reader :name
     
     def initialize(controller, name, params = nil)
       @controller, @name, @params = controller, name.to_s, params || {}

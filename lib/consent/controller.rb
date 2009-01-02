@@ -1,7 +1,7 @@
 module Consent
   class Controller
     
-    attr_reader :name, :params
+    attr_reader :name
     
     def initialize(description, name, params = nil)
       @description, @name, @params = description, name.to_s, params || {}
@@ -9,6 +9,10 @@ module Consent
     
     def controller_class
       "#{ @name }_controller".split('/').inject(Kernel) { |mod, name| mod.const_get(name.camelcase) }
+    end
+    
+    def catchall_action
+      Action.new(self, "", @params)
     end
     
     def /(action)

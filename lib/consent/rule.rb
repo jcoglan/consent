@@ -2,6 +2,7 @@ module Consent
   class Rule
     
     def initialize(action, block)
+      action = action.catchall_action if Controller === action
       @action, @predicate = action, block
     end
     
