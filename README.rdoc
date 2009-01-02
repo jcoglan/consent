@@ -37,6 +37,22 @@ For a rule to apply, all the parameters listed must be present in the request. W
 is made, all the rules that match it are checked and if any of them return false, the request
 is denied.
 
+Consent also allows rules for entire controllers, rather than for single actions. Simply omit
+the method name to get a rule for all actions in a controller.
+
+  profiles { session[:user] ? true : false }
+  
+  users(:id => 0) { false }
+
+
+=== Nested controllers
+
+If you have controllers nested in modules (and kept in subdirectories of app/controllers in
+the filesystem) you can address these controllers using the <tt>/</tt> operator. For example,
+to write a rule for <tt>Ajax::MapsController#find</tt>:
+
+  ajax/maps.find { session[:user] && request.get? }
+
 
 === HTTP method filters
 
@@ -44,7 +60,8 @@ There are helper methods for restricting the HTTP methods by which actions can b
 Simply state the verb, and list the actions you want to restrict to use only that verb:
 
   get posts.search,
-      tags.list
+      tags.list,
+      ajax/maps     # this line addresses a whole controller
   
   post profiles.update,
        users.delete
