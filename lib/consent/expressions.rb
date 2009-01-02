@@ -13,9 +13,11 @@ module Consent
     end
     
     def <<(expression)
-      block_given = (Proc === expression)
-      @expressions << expression unless block_given
-      each { |expr| @description.add_rule(expr, &expression) } if block_given
+      if expression.block
+        each { |expr| @description.add_rule(expr, &expression.block) }
+      else
+        @expressions << expression
+      end
     end
     
     alias + <<

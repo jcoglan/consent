@@ -7,13 +7,17 @@ Consent.rules do
   
   site.hello + site.goodbye(:name => 'Jimmy') + http { params[:id] != 'fubar' }
   
-  site(:id => 86) + site(:id => /^never$/i) { false }
+  site(:id => 86) + site(:id => /^never$/i) + ajax/maps(:id => 'stop') { false }
   
   get     site.hello,
           http.index
   post    http.update
   put     http.create
   delete  http.delete
+  
+  get ajax/maps
+  
+  ajax/maps.find { params[:id] != 'cancel' }
   
 end
 

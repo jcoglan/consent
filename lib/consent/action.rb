@@ -7,6 +7,13 @@ module Consent
       @controller, @name, @params = controller, name.to_s, params || {}
     end
     
+    attr_reader :block
+    
+    def make_rule(block)
+      @block = block
+      Rule.new(self, block)
+    end
+    
     def controller_class
       @controller.controller_class
     end

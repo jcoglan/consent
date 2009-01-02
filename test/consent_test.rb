@@ -1,7 +1,7 @@
 require 'test_helper'
 require File.dirname(__FILE__) + '/../../../../config/environment'
 
-%w(application site http).each do |path|
+%w(application site http ajax/maps).each do |path|
   require File.dirname(__FILE__) + '/controllers/' + path + '_controller'
 end
 
@@ -52,4 +52,20 @@ class HttpTest < ActionController::TestCase
     get :delete and assert_response 403
   end
 end
+
+class AjaxTest < ActionController::TestCase
+  tests Ajax::MapsController
+  
+  test "allowed" do
+    get :find and assert_response :success
+    get :find, :id => 'anything' and assert_response :success
+  end
+  
+  test "denied" do
+    post :find and assert_response 403
+    get :find, :id => 'stop' and assert_response 403
+    get :find, :id => 'cancel' and assert_response 403
+  end
+end
+
 

@@ -7,6 +7,13 @@ module Consent
       @description, @name, @params = description, name.to_s, params || {}
     end
     
+    attr_reader :block
+    
+    def make_rule(block)
+      @block = block
+      Rule.new(self, block)
+    end
+    
     def controller_class
       "#{ @name }_controller".split('/').inject(Kernel) { |mod, name| mod.const_get(name.camelcase) }
     end
@@ -33,7 +40,7 @@ module Consent
     
     def method_missing(name, params = nil, &block)
       action = Action.new(self, name, params)
-      @description.add_rule(action, &block) and return block if block_given?
+      @description.add_rule(action, &block) if block_given?
       action
     end
     
