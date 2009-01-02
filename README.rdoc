@@ -1,5 +1,4 @@
-Consent
-=======
+= Consent
 
 Consent is an access control abstraction layer for ActionController. It lets you restrict access
 to actions across your application using a single rules file, rather than scattering access
@@ -8,8 +7,7 @@ before_filter to all your controllers and checks whether an action can run accor
 rules you've set.
 
 
-Examples
-========
+== Examples
 
 On installation, Consent adds a file to your app at config/consent.rb. This file is where you
 write the access control rules for your application. You should see a block beginning:
@@ -21,7 +19,7 @@ controller and action name, and a block that should return true/false. The block
 access to the +request+, +params+ and +session+ objects that you would find in the controller,
 so you can use these to determine whether the action should run (true) or be blocked (false).
 
-For example, say you had an action SiteController#hello, and you wanted to restrict it so
+For example, say you had an action <tt>SiteController#hello</tt>, and you wanted to restrict it so
 that it could only be accessed using Ajax requests. The rule for that would be:
 
   site.hello { request.xhr? }
@@ -40,8 +38,7 @@ is made, all the rules that match it are checked and if any of them return false
 is denied.
 
 
-HTTP method filters
-===================
+=== HTTP method filters
 
 There are helper methods for restricting the HTTP methods by which actions can be accessed.
 Simply state the verb, and list the actions you want to restrict to use only that verb:
@@ -53,7 +50,6 @@ Simply state the verb, and list the actions you want to restrict to use only tha
        users.delete
 
 
-Copyright
-=========
+== Copyright
 
 Copyright (c) 2009 James Coglan, released under the MIT license
