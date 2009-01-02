@@ -8,7 +8,7 @@ module Consent
     end
     
     def controller_class
-      Kernel.const_get("#{ @controller.name.camelcase }Controller")
+      @controller.controller_class
     end
     
     def matches?(context)
@@ -19,6 +19,13 @@ module Consent
             (value == p[key])  || (value.to_s == p[key]) ||
             (value === p[key]) || (value === p[key].to_i)
           end
+    end
+    
+    def http_restrict(verb)
+      controller_class.class_eval do
+        verify  :method => verb, :only => @name,
+                :render => DENIAL_RESPONSE
+      end
     end
     
   end

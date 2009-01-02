@@ -11,12 +11,7 @@ module Consent
     
     %w(get post put head delete).each do |verb|
       define_method(verb) do |*actions|
-        actions.each do |action|
-          action.controller_class.class_eval do
-            verify  :method => verb, :only => action.name,
-                    :render => DENIAL_RESPONSE
-          end
-        end
+        actions.each { |action| action.http_restrict(verb) }
       end
     end
     
