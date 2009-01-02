@@ -15,7 +15,7 @@ module Consent
       @controller.module = name
     end
     
-    def matches?(context)
+    def ===(context)
       p = context.params
       @controller.name == p[:controller].to_s &&
           (@name == "" || @name == p[:action].to_s) &&

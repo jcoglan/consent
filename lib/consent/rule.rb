@@ -13,7 +13,7 @@ module Consent
   private
     
     def applies?(context)
-      @action.matches?(context)
+      @action === context
     end
     
   end
