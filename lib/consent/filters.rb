@@ -2,7 +2,8 @@ module Consent
   module Filters
     
     def check_access_using_consent
-      return false unless Consent.allows?(request, params, session)
+      render(:text => 'Access denied', :status => 403) and
+          return false unless Consent.allows?(request, params, session)
     end
     
   end
