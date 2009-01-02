@@ -4,5 +4,9 @@ class SiteController < ApplicationController
     render :text => 'hello'
   end
   
+  def goodbye
+    render :text => 'bye'
+  end
+  
 end
 
