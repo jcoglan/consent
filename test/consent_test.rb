@@ -27,7 +27,7 @@ class ConsentTest < ActionController::TestCase
     get :hello, :id => "fubar" and assert_response 403
     get :hello, :id => 86 and assert_response 403
     get :goodbye, :id => 86 and assert_response 403
-    get :goodbye, :id => "never" and assert_response 403
+    get :goodbye, :id => "NEVER" and assert_response 403
     get :hello, :id => "never" and assert_response 403
     get :goodbye, :id => "fubar", :name => "Jimmy" and assert_response 403
   end
