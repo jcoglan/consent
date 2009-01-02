@@ -7,6 +7,10 @@ module Consent
       @controller, @name, @params = controller, name.to_s, params || {}
     end
     
+    def controller_class
+      Kernel.const_get("#{ @controller.name.camelcase }Controller")
+    end
+    
     def matches?(context)
       p = context.params
       @controller.name == p[:controller].to_s &&

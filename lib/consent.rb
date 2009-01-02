@@ -2,6 +2,8 @@ module Consent
   
   RULES_FILE = "#{ RAILS_ROOT }/config/consent.rb"
   
+  DENIAL_RESPONSE = {:text => 'Access denied', :status => 403}
+  
   def self.rules(&block)
     desc = Description.new
     desc.instance_eval(&block)
