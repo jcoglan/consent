@@ -67,6 +67,19 @@ Simply state the verb, and list the actions you want to restrict to use only tha
        users.delete
 
 
+=== Helper methods
+
+To make it easier to write clean rules and reduce repetition, Consent allows you to define
+helper methods in the rule block that you can then use within rules to make decisions. For
+example, let's say we want a method to grab the current user from the session:
+
+  helper(:user) { User.find(session[:user_id]) }
+
+We can then use this helper in our rules:
+
+  profiles.update { user && user.is_admin? }
+
+
 == Copyright
 
 Copyright (c) 2009 James Coglan, released under the MIT license

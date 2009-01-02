@@ -20,6 +20,10 @@ module Consent
       @rules << Rule.new(action, block)
     end
     
+    def helper(name, &block)
+      Context.__send__(:define_method, name, &block)
+    end
+    
   end
 end
 
