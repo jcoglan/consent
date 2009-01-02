@@ -40,6 +40,19 @@ is made, all the rules that match it are checked and if any of them return false
 is denied.
 
 
+HTTP method filters
+===================
+
+There are helper methods for restricting the HTTP methods by which actions can be accessed.
+Simply state the verb, and list the actions you want to restrict to use only that verb:
+
+  get posts.search,
+      tags.list
+  
+  post profiles.update,
+       users.delete
+
+
 Copyright
 =========
 
