@@ -1,4 +1,11 @@
-%w(consent consent/filters).each do |file|
+%w[
+  consent
+  consent/controller
+  consent/action
+  consent/rule
+  consent/description
+  consent/filters
+].each do |file|
   require File.dirname(__FILE__) + '/lib/' + file
 end
 
