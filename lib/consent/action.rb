@@ -14,7 +14,7 @@ module Consent
     def matches?(context)
       p = context.params
       @controller.name == p[:controller].to_s &&
-          @name == p[:action].to_s &&
+          (@name == "" || @name == p[:action].to_s) &&
           @params.all? do |key, value|
             (value == p[key])  || (value.to_s == p[key]) ||
             (value === p[key]) || (value === p[key].to_i)
