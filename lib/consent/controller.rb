@@ -7,8 +7,8 @@ module Consent
       @description, @name = description, name.to_s
     end
     
-    def method_missing(name, &block)
-      action = Action.new(self, name)
+    def method_missing(name, params = nil, &block)
+      action = Action.new(self, name, params)
       @description.add_rule(action, &block) if block_given?
       action
     end
