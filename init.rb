@@ -3,6 +3,7 @@
   consent/controller
   consent/action
   consent/rule
+  consent/context
   consent/description
   consent/filters
 ].each do |file|

@@ -5,14 +5,14 @@ module Consent
       @action, @predicate = action, block
     end
     
-    def check(request, params, session)
-      applies?(params) ? @predicate.call : true
+    def check(context)
+      applies?(context) ? context.instance_eval(&@predicate) : true
     end
     
   private
     
-    def applies?(params)
-      @action.matches?(params)
+    def applies?(context)
+      @action.matches?(context)
     end
     
   end

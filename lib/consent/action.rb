@@ -7,8 +7,9 @@ module Consent
       @controller, @name = controller, name.to_s
     end
     
-    def matches?(params)
-      @controller.name == params[:controller].to_s && @name == params[:action].to_s
+    def matches?(context)
+      p = context.params
+      @controller.name == p[:controller].to_s && @name == p[:action].to_s
     end
     
   end

@@ -10,7 +10,8 @@ module Consent
   
   def self.allows?(request, params, session)
     load RULES_FILE unless RAILS_ENV == "production" and @rules
-    @rules.nil? or @rules.all? { |rule| rule.check(request, params, session) }
+    ctx = Context.new(request, params, session)
+    @rules.nil? or @rules.all? { |rule| rule.check(ctx) }
   end
   
 end
