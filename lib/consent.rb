@@ -4,6 +4,9 @@ module Consent
   
   DENIAL_RESPONSE = {:text => 'Access denied', :status => 403}
   
+  class DenyException < Exception; end
+  class AllowException < Exception; end
+  
   def self.rules(&block)
     desc = Description.new
     desc.instance_eval(&block)

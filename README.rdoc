@@ -29,6 +29,19 @@ rule, and should return +true+ if the request is allowed and +false+ if it shoul
 Within the block, you have access to the +request+, +params+ and +session+ objects so you
 can use them to make decisions about whether to allow the request (see the example above).
 
+Within a decision block, you can use the words +deny+ and +allow+ to clean code up a bit.
+Both these keywords cause the block to return early without processing any other instructions;
++deny+ denies the request and +allow+, well, allows it. For example, the following rule
+blocks requests for <tt>:id</tt> between 45 and 60, except for if <tt>:id</tt> is 54:
+
+  users.find(:id => 45..60) do
+    allow if params[:id].to_i == 54
+    false
+  end
+
+If <tt>:id</tt> is 54, the rule allows the request; +allow+ makes the block return early
+so it does not return the value +false+ from its last expression.
+
 
 === Helper methods
 

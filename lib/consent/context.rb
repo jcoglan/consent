@@ -7,6 +7,14 @@ module Consent
       @request, @params, @session = request, params, session
     end
     
+    def deny
+      raise DenyException
+    end
+    
+    def allow
+      raise AllowException
+    end
+    
   end
 end
 

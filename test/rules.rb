@@ -1,9 +1,13 @@
 Consent.rules do
   
   site.goodbye(:id => 12)       { false }
-  site.goodbye(:id => 45..60)   { false }
   site.goodbye(:id => "twelve") { false }
   site.goodbye(:id => /foo/i)   { false }
+  
+  site.goodbye(:id => 45..60) do
+    allow if params[:id].to_i == 54
+    false
+  end
   
   site.hello                        +
   (site.goodbye(:name => 'Jimmy')   +

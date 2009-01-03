@@ -13,6 +13,7 @@ class ConsentTest < ActionController::TestCase
   test "allowed" do
     get :hello and assert_response :success
     get :goodbye, :id => 10 and assert_response :success
+    get :goodbye, :id => 54 and assert_response :success
     get :hello, :id => "sometimes" and assert_response :success
     get :goodbye, :id => 87 and assert_response :success
     get :goodbye, :id => "nothing" and assert_response :success

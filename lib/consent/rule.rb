@@ -12,7 +12,12 @@ module Consent
     end
     
     def check(context)
-      applies?(context) ? context.instance_eval(&@predicate) : true
+      return true unless applies?(context)
+      context.instance_eval(&@predicate) != false
+    rescue DenyException
+      false
+    rescue AllowException
+      true
     end
     
   private
