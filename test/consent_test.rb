@@ -64,6 +64,11 @@ class AjaxTest < ActionController::TestCase
     get :find, :id => 'anything' and assert_response :success
   end
   
+  test "redirected" do
+    get :find, :user => "special"
+    assert_redirected_to :controller => :site, :action => :hello, :username => "special"
+  end
+  
   test "denied" do
     post :find and assert_response 403
     get :find, :id => 'fubar' and assert_response 403

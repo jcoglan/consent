@@ -18,6 +18,8 @@ module Consent
       false
     rescue AllowException
       true
+    rescue RedirectException => re
+      re.params
     end
     
   private

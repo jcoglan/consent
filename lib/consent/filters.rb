@@ -3,7 +3,9 @@ module Consent
     
     private
     def check_access_using_consent
-      render(DENIAL_RESPONSE) and return false unless Consent.allows?(request, params, session)
+      result = Consent.allows?(request, params, session)
+      render(DENIAL_RESPONSE) and return false if result == false
+      redirect_to(result) and return false if Hash === result
     end
     
   end

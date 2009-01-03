@@ -42,6 +42,14 @@ blocks requests for <tt>:id</tt> between 45 and 60, except for if <tt>:id</tt> i
 If <tt>:id</tt> is 54, the rule allows the request; +allow+ makes the block return early
 so it does not return the value +false+ from its last expression.
 
+You can also perform redirects from rule blocks using the +redirect+ keyword. Again, this
+keyword blocks execution of the rest of the block, and it allows you to use the same
+shorthand for action expressions as is used for matching requests (see below). For example,
+here's a simple rule to block all requests to <tt>ProfilesController</tt>, redirecting
+to <tt>SiteController#hello</tt>:
+
+  profiles { redirect site.hello }
+
 
 === Helper methods
 

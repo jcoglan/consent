@@ -1,6 +1,7 @@
 module Consent
   class Context
     
+    include Expression::Generator
     attr_reader :request, :params, :session
     
     def initialize(request, params, session)
@@ -13,6 +14,10 @@ module Consent
     
     def allow
       raise AllowException
+    end
+    
+    def redirect(expression)
+      raise RedirectException.new(expression)
     end
     
   end

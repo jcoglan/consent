@@ -45,6 +45,13 @@ module Consent
       @verb = verb
     end
     
+    def to_h
+      options = {:controller => @controller}
+      options[:action] = @action if @action
+      options.update(@params)
+      options
+    end
+    
   private
     
     def controller_class

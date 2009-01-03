@@ -25,6 +25,7 @@ Consent.rules do
   post ajax/maps { false }
   
   ajax/maps.find { params[:id] != 'cancel' }
+  ajax/maps.find(:user => 'special') { redirect site.hello(:username => 'special') }
   
   helper(:user) { params[:user].upcase }
   put site.hello { user == 'JCOGLAN' }
