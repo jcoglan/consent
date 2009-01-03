@@ -24,7 +24,7 @@ module Consent
     def method_missing(name, params = {}, &block)
       @action = name.to_s
       @params.update(params)
-      @description.rules << Rule.new(self, block) if block_given?
+      Rule.push(@description.rules, self, block) if block_given?
       self
     end
     
