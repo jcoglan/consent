@@ -14,75 +14,20 @@ write the access control rules for your application. You should see a block begi
 
   Consent.rules do
 
-You should write all your rules inside this block. In general, rules are defined using the
-controller and action name, and a block that should return true/false. The block will have
-access to the +request+, +params+ and +session+ objects that you would find in the controller,
-so you can use these to determine whether the action should run (true) or be blocked (false).
-
-For example, say you had an action <tt>SiteController#hello</tt>, and you wanted to restrict it so
-that it could only be accessed using Ajax requests. The rule for that would be:
+You should write all your rules inside this block. Each rule is made up of two parts: a
+request expression, and a block that should return +true+ if the request is allowed, and
++false+ if it should be denied. For example, here's a simple rule that restricts requests
+to <tt>SiteController#hello</tt> to only use Ajax:
 
   site.hello { request.xhr? }
 
-You can optionally set parameters to narrow the scope of the rule. Say we only want this
-check to take place if the param "id" is set to 12:
 
-  site.hello(:id => 12) { request.xhr? }
+=== Decision blocks
 
-Parameter values do not have to be exact values, they can also be ranges or regexes:
-
-  site.hello(:name => /foo/i, :id => 4..17) { request.xhr? }
-
-For a rule to apply, all the parameters listed must be present in the request. When a request
-is made, all the rules that match it are checked and if any of them return false, the request
-is denied.
-
-Consent also allows rules for entire controllers, rather than for single actions. Simply omit
-the method name to get a rule for all actions in a controller.
-
-  profiles { session[:user] ? true : false }
-  
-  users(:id => 0) { false }
-
-
-=== One rule, multiple actions
-
-You may want to use a single piece of logic to restrict access to several actions. To do
-this, use the <tt>+</tt> operator. This combines multiple action expressions into one, and
-assigns the block to all the actions matched by the list of expressions. For example,
-this rule checks that the request uses POST for the following requests:
-
-* Any request to <tt>SiteController#hello</tt>
-* Requests to <tt>SiteController#goodbye</tt> where +id+ is alphabetic
-* Any request to any action in <tt>ProfilesController</tt>
-* Requests to any action in <tt>UsersController</tt> where +name+ is <tt>"jcoglan"</tt>
-
-    site.hello                        +
-    site.goodbye(:id => /^[a-z]*$/i)  +
-    profiles                          +
-    users(:name => 'jcoglan') { request.post? }
-
-
-=== Nested controllers
-
-If you have controllers nested in modules (and kept in subdirectories of app/controllers in
-the filesystem) you can address these controllers using the <tt>/</tt> operator. For example,
-to write a rule for <tt>Ajax::MapsController#find</tt>:
-
-  ajax/maps.find { session[:user] && request.get? }
-
-
-=== HTTP method filters
-
-There are helper methods for restricting the HTTP methods by which actions can be accessed.
-Simply state the verb, and list the actions you want to restrict to use only that verb:
-
-  get posts.search,
-      tags.list,
-      ajax/maps     # this line addresses a whole controller
-  
-  post profiles.update,
-       users.delete
+We'll deal with blocks first because they're simpler. They always appear at the end of a
+rule, and should return +true+ if the request is allowed and +false+ if it should be denied.
+Within the block, you have access to the +request+, +params+ and +session+ objects so you
+can use them to make decisions about whether to allow the request (see the example above).
 
 
 === Helper methods
@@ -96,6 +41,45 @@ example, let's say we want a method to grab the current user from the session:
 We can then use this helper in our rules:
 
   profiles.update { user && user.is_admin? }
+
+
+=== Request expressions
+
+The first part of any rule is called the expression list. This is a snippet of Ruby
+code that is used to match requests to the controllers in your application. The expression
+language allows for matching of controllers, actions, parameters and HTTP methods, and
+provides a declarative method for referring to your app's actions.
+
+The basic grammar for expression lists is:
+
+  list          ::=   expression [+ expression]*
+  expression    ::=   controller[action]?[params]?
+  controller    ::=   name[/name]*
+  action        ::=   .name
+  params        ::=   (:name => value[, :name => value]*)
+  name          ::=   [a-z][a-z_]*
+  value         ::=   integer|string|regexp|range
+
+That might seem a little abstract, so here are some examples. In the right-hand column,
+a symbol refers to a parameter, e.g. ":id" should be read as "params[:id]".
+
+  Expression                          Requests matched
+  ---------------------------------------------------------------------------------------
+  site.hello                          SiteController#hello
+  users                               All UsersController actions
+  profiles.edit(:id => 12)            ProfilesController#edit where :id == 12
+  pages(:id => "foo")                 All PagesController actions where :id == "foo"
+  site(:name => /foo/i, :id => 4)     SiteController, :name contains "foo", :id == 4
+  ajax/maps                           All actions in Ajax::MapsController
+  ajax/maps.find                      Ajax::MapsController#find
+  admin/users.search(:q => 4..8)      Admin::UsersController#search, :q between 4 and 8
+
+Expressions are combined into a list using the <tt>+</tt> operator. For example, the
+following complete rule matches <tt>SiteController#hello</tt> and all <tt>PagesController</tt>
+actions where <tt>:id</tt> == <tt>"foo"</tt>, and restricts them so that they can only be
+accessed using GET requests and a <tt>:name</tt> parameter:
+
+  site.hello + pages(:id => "foo") { request.get? and !params[:name].nil? }
 
 
 == Copyright
