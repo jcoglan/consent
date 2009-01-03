@@ -47,6 +47,11 @@ class HttpTest < ActionController::TestCase
     delete :delete and assert_response :success
   end
   
+  test "redirected" do
+    get :index, :user => "some guy"
+    assert_redirected_to :controller => :site, :action => :index
+  end
+  
   test "denied" do
     get :index, :id => "fubar" and assert_response 403
     post :index and assert_response 403

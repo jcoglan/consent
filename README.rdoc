@@ -50,6 +50,16 @@ to <tt>SiteController#hello</tt>:
 
   profiles { redirect site.hello }
 
+Note that if you only specify a controller with no action to redirect to, the Rails
+convention is to use the +index+ action. For example, this rule redirects to
+<tt>UsersController#index</tt> if there is no user logged in, otherwise the request
+is allowed:
+
+  profiles do
+    redirect users unless session[:user]
+    allow
+  end
+
 
 === Helper methods
 
