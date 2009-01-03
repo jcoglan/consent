@@ -1,9 +1,14 @@
 module Consent
   class Rule
     
+    def self.push(list, exprs, block)
+      exprs.block = block
+      exprs = [exprs] unless Enumerable === exprs
+      exprs.each { |expr| list << self.new(expr, block) }
+    end
+    
     def initialize(expression, block)
       @expression, @predicate = expression, block
-      expression.block = block
     end
     
     def check(context)

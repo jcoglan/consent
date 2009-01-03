@@ -23,7 +23,6 @@ class ConsentTest < ActionController::TestCase
     get :goodbye, :id => 12 and assert_response 403
     get :goodbye, :id => 50 and assert_response 403
     get :goodbye, :id => "food" and assert_response 403
-    post :hello and assert_response 403
     get :hello, :id => "fubar" and assert_response 403
     get :hello, :id => 86 and assert_response 403
     get :goodbye, :id => 86 and assert_response 403
@@ -47,8 +46,8 @@ class HttpTest < ActionController::TestCase
   test "denied" do
     get :index, :id => "fubar" and assert_response 403
     post :index and assert_response 403
-    put :update and assert_response 403
-    delete :create and assert_response 403
+    get :update and assert_response 403
+    get :create and assert_response 403
     get :delete and assert_response 403
   end
 end

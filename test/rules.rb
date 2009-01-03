@@ -14,13 +14,11 @@ Consent.rules do
   site(:id => /^never$/i) +
   ajax/maps(:id => 'stop') { false }
   
-  get     site.hello,
-          http.index
-  post    http.update
-  put     http.create
-  delete  http.delete
+  post(http.index) + get(http.update, http.create, http.delete) { false }
+  http.create { request.put? }
+  http.delete { request.delete? }
   
-  get ajax/maps
+  post ajax/maps { false }
   
   ajax/maps.find { params[:id] != 'cancel' }
   

@@ -29,19 +29,20 @@ module Consent
     end
     
     def ===(context)
-      p = context.params
-      return false unless @controller == p[:controller].to_s
-      return false if @action and @action != p[:action].to_s
+      p, req = context.params, context.request
+      
+      return false if (@controller != p[:controller].to_s)      or
+                      (@action and @action != p[:action].to_s)  or
+                      (@verb and !req.__send__("#{ @verb }?"))
+      
       @params.all? do |key, value|
         (value == p[key])  || (value == p[key].to_s) ||
         (value === p[key]) || (value === p[key].to_i)
       end
     end
     
-    def http_restrict(verb)
-      options = {:method => verb, :render => DENIAL_RESPONSE}
-      options[:only] = @action if @action
-      controller_class.class_eval { verify(options) }
+    def verb=(verb)
+      @verb = verb
     end
     
   private
@@ -50,35 +51,6 @@ module Consent
       "#{ @controller }_controller".split('/').inject(Kernel) do |mod, name|
         mod.const_get(name.camelcase)
       end
-    end
-    
-    class Group
-      
-      include Enumerable
-      attr_reader :description, :block
-      
-      def initialize(description)
-        @description, @exprs = description, []
-      end
-      
-      def each(&block)
-        @exprs.each(&block)
-      end
-      
-      def +(expression)
-        generate_rules!(expression.block) if expression.block
-        Enumerable === expression ?
-            expression.each { |expr| @exprs << expr } :
-            @exprs << expression
-        self
-      end
-      
-    private
-      
-      def generate_rules!(block)
-        each { |expr| @description.rules << Rule.new(expr, block) }
-      end
-      
     end
     
   end
