@@ -22,5 +22,8 @@ Consent.rules do
   
   ajax/maps.find { params[:id] != 'cancel' }
   
+  helper(:user) { params[:user].upcase }
+  put site.hello { user == 'JCOGLAN' }
+  
 end
 
