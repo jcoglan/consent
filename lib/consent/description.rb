@@ -1,6 +1,7 @@
 module Consent
   class Description
     
+    include Expression::Generator
     attr_reader :rules
     
     def initialize
@@ -22,8 +23,10 @@ module Consent
       EOS
     end
     
-    def method_missing(name, params = {}, &block)
-      expr = Expression.new(self, name, params)
+  private
+    
+    def generate_expression(*args, &block)
+      expr = super
       Rule.push(@rules, expr, block) if block_given?
       expr
     end
