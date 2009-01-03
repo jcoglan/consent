@@ -1,14 +1,4 @@
-%w[
-  consent
-  consent/controller
-  consent/action
-  consent/rule
-  consent/context
-  consent/description
-  consent/filters
-].each do |file|
-  require File.dirname(__FILE__) + '/lib/' + file
-end
+require File.dirname(__FILE__) + '/lib/consent'
 
 require RAILS_ROOT + '/app/controllers/application'
 

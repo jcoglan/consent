@@ -32,7 +32,7 @@ class ConsentTest < ActionController::TestCase
     get :goodbye, :id => "fubar", :name => "Jimmy" and assert_response 403
   end
 end
-
+ 
 class HttpTest < ActionController::TestCase
   tests HttpController
   
@@ -52,7 +52,7 @@ class HttpTest < ActionController::TestCase
     get :delete and assert_response 403
   end
 end
-
+ 
 class AjaxTest < ActionController::TestCase
   tests Ajax::MapsController
   
@@ -63,9 +63,9 @@ class AjaxTest < ActionController::TestCase
   
   test "denied" do
     post :find and assert_response 403
+    get :find, :id => 'fubar' and assert_response 403
     get :find, :id => 'stop' and assert_response 403
     get :find, :id => 'cancel' and assert_response 403
   end
 end
-
 

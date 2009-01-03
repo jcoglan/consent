@@ -1,9 +1,9 @@
 module Consent
   class Rule
     
-    def initialize(action, block)
-      action = action.catchall_action if Controller === action
-      @action, @predicate = action, block
+    def initialize(expression, block)
+      @expression, @predicate = expression, block
+      expression.block = block
     end
     
     def check(context)
@@ -13,7 +13,7 @@ module Consent
   private
     
     def applies?(context)
-      @action === context
+      @expression === context
     end
     
   end
