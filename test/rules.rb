@@ -5,9 +5,9 @@ Consent.rules do
   site.goodbye(:id => "twelve") { false }
   site.goodbye(:id => /foo/i)   { false }
   
-  site.hello                      +
-  site.goodbye(:name => 'Jimmy')  +
-  ajax/maps.find                  +
+  site.hello                        +
+  (site.goodbye(:name => 'Jimmy')   +
+  ajax/maps.find)                   +
   http { params[:id] != 'fubar' }
   
   site(:id => 86)         +

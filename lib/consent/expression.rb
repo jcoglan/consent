@@ -55,7 +55,7 @@ module Consent
     class Group
       
       include Enumerable
-      attr_reader :description
+      attr_reader :description, :block
       
       def initialize(description)
         @description, @exprs = description, []
@@ -67,7 +67,9 @@ module Consent
       
       def +(expression)
         generate_rules!(expression.block) if expression.block
-        @exprs << expression
+        Enumerable === expression ?
+            expression.each { |expr| @exprs << expr } :
+            @exprs << expression
         self
       end
       
