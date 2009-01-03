@@ -82,6 +82,17 @@ accessed using GET requests and a <tt>:name</tt> parameter:
   site.hello + pages(:id => "foo") { request.get? and !params[:name].nil? }
 
 
+=== HTTP method filtering
+
+You can also use HTTP verbs (get, post, etc) in your expressions to match more specific
+requests. Each HTTP method takes a list of one or more expressions and narrows the scope
+of the expressions to a specific verb. For example, this matches all <tt>UsersController</tt>
+actions using any verb, POST requests to <tt>ProfilesController#update</tt>, and PUT
+requests to <tt>TagsController</tt> and <tt>SiteController#hello</tt>:
+
+  users + post(profiles.update) + put(tags, site.hello)
+
+
 == Copyright
 
 Copyright (c) 2009 James Coglan, released under the MIT license
