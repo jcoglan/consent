@@ -39,6 +39,7 @@ class HttpTest < ActionController::TestCase
     get :index and assert_response :success
     get :index, :id => "allowed" and assert_response :success
     post :update and assert_response :success
+    get :update, :name => "anything" and assert_response :success
     put :create and assert_response :success
     delete :delete and assert_response :success
   end
@@ -46,7 +47,7 @@ class HttpTest < ActionController::TestCase
   test "denied" do
     get :index, :id => "fubar" and assert_response 403
     post :index and assert_response 403
-    get :update and assert_response 403
+    get :update, :name => "duff" and assert_response 403
     get :create and assert_response 403
     get :delete and assert_response 403
   end
