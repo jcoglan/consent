@@ -14,7 +14,7 @@ Consent.rules do
   site(:id => /^never$/i) +
   ajax/maps(:id => 'stop') { false }
   
-  post(http.index) + get(http.update(:name => 'duff'), http.create, http.delete) { false }
+  post(http.index) + get(http.update(:name => 'duff') + http.create + http.delete) { false }
   http.create { request.put? }
   http.delete { request.delete? }
   

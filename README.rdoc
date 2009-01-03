@@ -90,7 +90,7 @@ of the expressions to a specific verb. For example, this matches all <tt>UsersCo
 actions using any verb, POST requests to <tt>ProfilesController#update</tt>, and PUT
 requests to <tt>TagsController</tt> and <tt>SiteController#hello</tt>:
 
-  users + post(profiles.update) + put(tags, site.hello)
+  users + post(profiles.update) + put(tags + site.hello)
 
 
 == Copyright
