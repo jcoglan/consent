@@ -19,6 +19,7 @@ class ConsentTest < ActionController::TestCase
     get :goodbye, :id => "nothing" and assert_response :success
     get :goodbye, :id => "fubar" and assert_response :success
     put :hello, :user => "jcoglan" and assert_response :success
+    get :hello, :env => "dev" and assert_response :success
   end
   
   test "denied" do
@@ -32,6 +33,7 @@ class ConsentTest < ActionController::TestCase
     get :hello, :id => "never" and assert_response 403
     get :goodbye, :id => "fubar", :name => "Jimmy" and assert_response 403
     put :hello, :user => "Jimmy" and assert_response 403
+    get :hello, :env => "prod" and assert_response 403
   end
 end
  

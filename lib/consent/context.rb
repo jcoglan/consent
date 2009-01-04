@@ -20,6 +20,10 @@ module Consent
       raise RedirectException.new(expression)
     end
     
+    %w(development production test).each do |env|
+      define_method("#{ env }?") { RAILS_ENV.to_s.downcase == env }
+    end
+    
   end
 end
 

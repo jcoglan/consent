@@ -4,6 +4,9 @@ Consent.rules do
   site.goodbye(:id => "twelve") { false }
   site.goodbye(:id => /foo/i)   { false }
   
+  site.hello(:env => 'dev') { test? }
+  site.hello(:env => 'prod') { production? }
+  
   site.goodbye(:id => 45..60) do
     allow if params[:id].to_i == 54
     false

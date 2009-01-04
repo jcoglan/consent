@@ -124,6 +124,19 @@ We can then use this helper in our rules:
 
   profiles.update { user && user.is_admin? }
 
+Consent provides a few built-in helpers to access commonly used data for performing access
+control. They are as follows:
+
+* +request+, +params+ and +session+ provide access to the objects of the same name
+  that are commonly accessed in controller code.
+* <tt>development?</tt>, <tt>production?</tt> and <tt>test?</tt> each return +true+ or
+  +false+ in response to the environment the app is currently running in.
+
+For example, if you want <tt>DebugController</tt> accessible only during development, this
+rule will do just that:
+
+  debug { development? }
+
 
 == Copyright
 
