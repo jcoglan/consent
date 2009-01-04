@@ -1,10 +1,11 @@
 = Consent
 
 Consent is an access control abstraction layer for ActionController. It lets you restrict access
-to actions across your application using a single rules file, rather than scattering access
+to actions across your application using a single config file, rather than scattering access
 logic across your controllers using verify() and method-specific logic. It acts as a single
 before_filter to all your controllers and checks whether an action can run according to the
-rules you've set.
+rules you've set. Think of it as a firewall that sits between your routes file and your
+controller logic.
 
 
 == Examples
@@ -20,58 +21,6 @@ request expression, and a block that should return +true+ if the request is allo
 to <tt>SiteController#hello</tt> to only use Ajax:
 
   site.hello { request.xhr? }
-
-
-=== Decision blocks
-
-We'll deal with blocks first because they're simpler. They always appear at the end of a
-rule, and should return +true+ if the request is allowed and +false+ if it should be denied.
-Within the block, you have access to the +request+, +params+ and +session+ objects so you
-can use them to make decisions about whether to allow the request (see the example above).
-
-Within a decision block, you can use the words +deny+ and +allow+ to clean code up a bit.
-Both these keywords cause the block to return early without processing any other instructions;
-+deny+ denies the request and +allow+, well, allows it. For example, the following rule
-blocks requests for <tt>:id</tt> between 45 and 60, except for if <tt>:id</tt> is 54:
-
-  users.find(:id => 45..60) do
-    allow if params[:id].to_i == 54
-    false
-  end
-
-If <tt>:id</tt> is 54, the rule allows the request; +allow+ makes the block return early
-so it does not return the value +false+ from its last expression.
-
-You can also perform redirects from rule blocks using the +redirect+ keyword. Again, this
-keyword blocks execution of the rest of the block, and it allows you to use the same
-shorthand for action expressions as is used for matching requests (see below). For example,
-here's a simple rule to block all requests to <tt>ProfilesController</tt>, redirecting
-to <tt>SiteController#hello</tt>:
-
-  profiles { redirect site.hello }
-
-Note that if you only specify a controller with no action to redirect to, the Rails
-convention is to use the +index+ action. For example, this rule redirects to
-<tt>UsersController#index</tt> if there is no user logged in, otherwise the request
-is allowed:
-
-  profiles do
-    redirect users unless session[:user]
-    allow
-  end
-
-
-=== Helper methods
-
-To make it easier to write clean rules and reduce repetition, Consent allows you to define
-helper methods in the rule block that you can then use within rules to make decisions. For
-example, let's say we want a method to grab the current user from the session:
-
-  helper(:user) { User.find(session[:user_id]) }
-
-We can then use this helper in our rules:
-
-  profiles.update { user && user.is_admin? }
 
 
 === Request expressions
@@ -122,6 +71,58 @@ actions using any verb, POST requests to <tt>ProfilesController#update</tt>, and
 requests to <tt>TagsController</tt> and <tt>SiteController#hello</tt>:
 
   users + post(profiles.update) + put(tags + site.hello)
+
+
+=== Decision blocks
+
+Decision blocks always appear at the end of a rule, and should return +true+ if the request
+is allowed and +false+ if it should be denied. Within the block, you have access to the
++request+, +params+ and +session+ objects so you can use them to make decisions about whether
+to allow the request.
+
+Within a decision block, you can use the words +deny+ and +allow+ to clean code up a bit.
+Both these keywords cause the block to return early without processing any other instructions;
++deny+ denies the request and +allow+, well, allows it. For example, the following rule
+blocks requests for <tt>:id</tt> between 45 and 60, except for if <tt>:id</tt> is 54:
+
+  users.update(:id => 45..60) do
+    allow if params[:id].to_i == 54
+    false
+  end
+
+If <tt>:id</tt> is 54, the rule allows the request; +allow+ makes the block return early
+so it does not return the value +false+ from its last expression.
+
+You can also perform redirects from rule blocks using the +redirect+ keyword. Again, this
+keyword blocks execution of the rest of the block, and it allows you to use the same
+shorthand for action expressions as is used for matching requests (see above). For example,
+here's a simple rule to block all requests to <tt>ProfilesController</tt>, redirecting
+to <tt>SiteController#hello</tt>:
+
+  profiles { redirect site.hello }
+
+Note that if you only specify a controller with no action to redirect to, the Rails
+convention is to use the +index+ action. For example, this rule redirects to
+<tt>UsersController#index</tt> if there is no user logged in, otherwise the request
+is allowed:
+
+  profiles do
+    redirect users unless session[:user]
+    allow
+  end
+
+
+=== Helper methods
+
+To make it easier to write clean rules and reduce repetition, Consent allows you to define
+helper methods in the rule block that you can then use within rules to make decisions. For
+example, let's say we want a method to grab the current user from the session:
+
+  helper(:user) { User.find(session[:user_id]) }
+
+We can then use this helper in our rules:
+
+  profiles.update { user && user.is_admin? }
 
 
 == Copyright
