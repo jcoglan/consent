@@ -1,7 +1,7 @@
 require 'test_helper'
 require File.dirname(__FILE__) + '/../../../../config/environment'
 
-%w(application site http ajax/maps).each do |path|
+%w(application site http ajax/maps allow_deny).each do |path|
   require File.dirname(__FILE__) + '/controllers/' + path + '_controller'
 end
 
@@ -81,6 +81,26 @@ class AjaxTest < ActionController::TestCase
     get :find, :id => 'fubar' and assert_response 403
     get :find, :id => 'stop' and assert_response 403
     get :find, :id => 'cancel' and assert_response 403
+  end
+end
+
+class AllowDenyTest < ActionController::TestCase
+  tests AllowDenyController
+  
+  test "allowed" do
+    get :first, :id => "foo" and assert_response :success
+    get :second, :id => "anything" and assert_response :success
+    get :third, :id => "start" and assert_response :success
+    get :fourth, :id => "allow" and assert_response :success
+    
+    # Ambiguous allow if/unless rules
+    get :first, :id => "anything" and assert_response :success
+    get :second, :id => "block" and assert_response :success
+  end
+  
+  test "denied" do
+    get :third, :id => "stop" and assert_response 403
+    get :fourth, :id => "something" and assert_response 403
   end
 end
 

@@ -93,6 +93,36 @@ blocks requests for <tt>:id</tt> between 45 and 60, except for if <tt>:id</tt> i
 If <tt>:id</tt> is 54, the rule allows the request; +allow+ makes the block return early
 so it does not return the value +false+ from its last expression.
 
+
+=== Be careful with +allow+ and +deny+
+
+Note that +allow+ and +deny+ are only intended for returning early from rule blocks, and
+are provided because you can't actually use the +return+ statement in Ruby blocks without
+running into some weird differences between procs, blocks and lambdas. You might be
+tempted to use them to write more expressive single-line rules, but this can lead to
+ambiguous rules. For example:
+
+  # Rule A
+  tags.create { allow unless request.get? }
+  
+  # Rule B
+  tags.create { deny if request.get? }
+
+These look like they might do the same thing, but they don't. In the face of a GET request,
+rule +A+ won't call +allow+ and will simply return +nil+, while rule +B+ will call +deny+
+and block the request. Since +deny+ is a stronger command than +allow+ (requests are allowed
+by default!), Consent ignores a +nil+ response to a rule as this makes sure +deny+ rules
+like +B+ work all the time.
+
+In short: if you want a request to be blocked, the rule must call +deny+ or +redirect+,
+or evaluate to +false+. Anything else will be ignored. The best way to write the above
+rules is:
+
+  tags.create { !request.get? }
+
+
+=== Redirects
+
 You can also perform redirects from rule blocks using the +redirect+ keyword. Again, this
 keyword blocks execution of the rest of the block, and it allows you to use the same
 shorthand for action expressions as is used for matching requests (see above). For example,

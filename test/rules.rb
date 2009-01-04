@@ -38,5 +38,10 @@ Consent.rules do
   helper(:user) { params[:user].upcase }
   put site.hello { user == 'JCOGLAN' }
   
+  allow_deny.first    { allow if params[:id] == "foo" }
+  allow_deny.second   { allow unless params[:id] == "block" }
+  allow_deny.third    { deny if params[:id] == "stop" }
+  allow_deny.fourth   { deny unless params[:id] == "allow" }
+  
 end
 
