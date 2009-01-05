@@ -8,6 +8,8 @@ Consent.rules do
   site.goodbye { deny if format.json? }
   http * xml { deny }
   
+  http * site { deny }  # Should block nothing
+  
   site.hello(:env => 'dev') { test? }
   site.hello(:env => 'prod') { production? }
   

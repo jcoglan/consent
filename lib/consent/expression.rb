@@ -1,6 +1,7 @@
 module Consent
   class Expression
     
+    include Observable
     attr_accessor :block
     
     def initialize(description, controller, params = {})
@@ -20,6 +21,7 @@ module Consent
     def *(expression)
       @params[:format] = expression.instance_eval { @controller }
       Rule.push(@description.rules, self, expression.block) if expression.block
+      expression.destroy!
       self
     end
     
@@ -57,6 +59,11 @@ module Consent
       options[:action] = @action if @action
       options.update(@params)
       options
+    end
+    
+    def destroy!
+      changed(true)
+      notify_observers(:destroyed)
     end
     
   private

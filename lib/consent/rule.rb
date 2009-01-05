@@ -9,6 +9,7 @@ module Consent
     
     def initialize(expression, block)
       @expression, @predicate = expression, block
+      @expression.add_observer(self)
     end
     
     def check(context)
@@ -22,10 +23,14 @@ module Consent
       re.params
     end
     
+    def update(message)
+      @invalid = true if message == :destroyed
+    end
+    
   private
     
     def applies?(context)
-      @expression === context
+      !@invalid and @expression === context
     end
     
   end
