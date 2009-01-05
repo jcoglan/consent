@@ -8,5 +8,9 @@ class SiteController < ApplicationController
     render :text => 'bye'
   end
   
+  def redirector
+    redirect_to ajax/maps.find
+  end
+  
 end
 

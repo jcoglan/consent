@@ -23,6 +23,11 @@ class ConsentTest < ActionController::TestCase
     get :hello, :env => "dev" and assert_response :success
   end
   
+  test "redirected" do
+    get :redirector
+    assert_redirected_to :controller => "ajax/maps", :action => :find
+  end
+  
   test "denied" do
     get :hello, :format => :xml, :name => "rdf" and assert_response 403
     get :goodbye, :format => :json and assert_response 403
