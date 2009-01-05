@@ -8,3 +8,7 @@ class ::ApplicationController
   before_filter :check_access_using_consent
 end
 
+class ::ActionController::Routing::RouteSet
+  include Consent::Extensions::Routing
+end
+
