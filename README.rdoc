@@ -27,16 +27,17 @@ to <tt>SiteController#hello</tt> to only use Ajax:
 
 The first part of any rule is called the expression list. This is a snippet of Ruby
 code that is used to match requests to the controllers in your application. The expression
-language allows for matching of controllers, actions, parameters and HTTP methods, and
-provides a declarative method for referring to your app's actions.
+language allows for matching of controllers, actions, parameters, response formats and
+HTTP methods, and provides a declarative method for referring to your app's actions.
 
 The basic grammar for expression lists is:
 
   list          ::=   expression [+ expression]*
-  expression    ::=   controller[action]?[params]?
+  expression    ::=   controller[action]?[params]?[format]?
   controller    ::=   name[/name]*
   action        ::=   .name
   params        ::=   (:name => value[, :name => value]*)
+  format        ::=   [.|*]name
   name          ::=   [a-z][a-z_]*
   value         ::=   integer|string|regexp|range
 
@@ -53,6 +54,9 @@ a symbol refers to a parameter, e.g. ":id" should be read as "params[:id]".
   ajax/maps                           All actions in Ajax::MapsController
   ajax/maps.find                      Ajax::MapsController#find
   admin/users.search(:q => 4..8)      Admin::UsersController#search, :q between 4 and 8
+  tags.list.json                      TagsController#list where the format is JSON
+  tags*xml                            Any TagsController action where the format is XML
+  tags(:q => "lolz")*txt              TagsController, :q == "lolz" and format is TXT
 
 Expressions are combined into a list using the <tt>+</tt> operator. For example, the
 following complete rule matches <tt>SiteController#hello</tt> and all <tt>PagesController</tt>
@@ -159,6 +163,8 @@ control. They are as follows:
 
 * +request+, +params+ and +session+ provide access to the objects of the same name
   that are commonly accessed in controller code.
+* +format+ returns a +StringInquirer+ for testing the response format. For example,
+  <tt>format.json?</tt> returns +true+ if JSON format has been requested.
 * <tt>development?</tt>, <tt>production?</tt> and <tt>test?</tt> each return +true+ or
   +false+ in response to the environment the app is currently running in.
 
