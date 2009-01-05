@@ -4,6 +4,10 @@ Consent.rules do
   site.goodbye(:id => "twelve") { false }
   site.goodbye(:id => /foo/i)   { false }
   
+  site.hello.xml { deny unless params[:name] == 'rss' }
+  site.goodbye { deny if format.json? }
+  http * xml { deny }
+  
   site.hello(:env => 'dev') { test? }
   site.hello(:env => 'prod') { production? }
   

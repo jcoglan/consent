@@ -1,3 +1,5 @@
+require 'active_support/string_inquirer'
+
 module Consent
   class Context
     
@@ -22,6 +24,11 @@ module Consent
     
     %w(development production test).each do |env|
       define_method("#{ env }?") { RAILS_ENV.to_s.downcase == env }
+    end
+    
+    def format
+      format = (@params[:format] || :html).to_s
+      ActiveSupport::StringInquirer.new(format)
     end
     
   end

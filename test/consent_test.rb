@@ -12,6 +12,7 @@ class ConsentTest < ActionController::TestCase
   
   test "allowed" do
     get :hello and assert_response :success
+    get :hello, :format => :xml, :name => "rss" and assert_response :success
     get :goodbye, :id => 10 and assert_response :success
     get :goodbye, :id => 54 and assert_response :success
     get :hello, :id => "sometimes" and assert_response :success
@@ -23,6 +24,8 @@ class ConsentTest < ActionController::TestCase
   end
   
   test "denied" do
+    get :hello, :format => :xml, :name => "rdf" and assert_response 403
+    get :goodbye, :format => :json and assert_response 403
     get :goodbye, :id => 12 and assert_response 403
     get :goodbye, :id => 50 and assert_response 403
     get :goodbye, :id => "food" and assert_response 403
@@ -60,6 +63,7 @@ class HttpTest < ActionController::TestCase
     get :update, :name => "duff" and assert_response 403
     get :create and assert_response 403
     get :delete and assert_response 403
+    get :index, :format => :xml and assert_response 403
   end
 end
  

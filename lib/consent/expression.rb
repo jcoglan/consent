@@ -17,12 +17,19 @@ module Consent
       expression
     end
     
+    def *(expression)
+      @params[:format] = expression.instance_eval { @controller }
+      Rule.push(@description.rules, self, expression.block) if expression.block
+      self
+    end
+    
     def nesting=(name)
       @controller = "#{ name }/#{ @controller }"
     end
     
     def method_missing(name, params = {}, &block)
-      @action = name.to_s
+      @params[:format] = name.to_s if @action
+      @action ||= name.to_s
       @params.update(params)
       Rule.push(@description.rules, self, block) if block_given?
       self
