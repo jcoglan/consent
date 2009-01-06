@@ -20,13 +20,23 @@ module Consent
     @rules = desc.rules
   end
   
-  def self.allows?(request, params, session)
+  def self.allows?(controller)
     load RULES_FILE if RAILS_ENV == "development" or @rules.nil?
     return true if @rules.nil?
-    ctx = Context.new(request, params, session)
+    
+    ctx = Context.new(controller)
     @rules.each do |rule|
       result = rule.check(ctx)
-      return result unless result == true
+      next if result == true
+      
+      ctx.log("\n[Consent firewall] matched #{ rule.inspect }")
+      ctx.log(  "                   BLOCKED") if result == false
+      ctx.log(  "                   REDIRECTED to #{ Expression.from_hash(result).inspect }") if Hash === result
+      ctx.log(  "                   rule: #{ rule.line_number }")
+      
+      ctx.log("\n")
+      
+      return result
     end
     true
   end

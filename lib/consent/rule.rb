@@ -1,5 +1,10 @@
+require 'forwardable'
+
 module Consent
   class Rule
+    
+    extend Forwardable
+    def_delegator(:@expression, :inspect)
     
     def self.push(list, exprs, block)
       exprs.block = block
@@ -10,6 +15,10 @@ module Consent
     def initialize(expression, block)
       @expression, @predicate = expression, block
       @expression.add_observer(self)
+    end
+    
+    def line_number
+      @predicate.inspect.scan(/@.*>/).first[1...-1]
     end
     
     def check(context)

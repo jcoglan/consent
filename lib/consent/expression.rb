@@ -1,11 +1,20 @@
+require 'observer'
+
 module Consent
   class Expression
     
     include Observable
     attr_accessor :block
     
+    def self.from_hash(hash)
+      self.new(nil, nil, hash)
+    end
+    
     def initialize(description, controller, params = {})
-      @description, @controller, @params = description, controller.to_s, params
+      @description, @params = description, params.dup
+      @controller = (@params.delete(:controller) || controller).to_s
+      @action = @params.delete(:action).to_s if @params[:action]
+      @action = @params.delete(:format).to_s if @params[:format]
     end
     
     def +(expression)

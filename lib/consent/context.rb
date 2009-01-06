@@ -1,13 +1,17 @@
+require 'forwardable'
 require 'active_support/string_inquirer'
 
 module Consent
   class Context
     
     include Expression::Generator
-    attr_reader :request, :params, :session
     
-    def initialize(request, params, session)
-      @request, @params, @session = request, params, session
+    extend Forwardable
+    def_delegators(:@controller, :request, :params, :session, :logger)
+    def_delegator(:logger, :info, :log)
+    
+    def initialize(controller)
+      @controller = controller
     end
     
     def deny
@@ -27,7 +31,7 @@ module Consent
     end
     
     def format
-      format = (@params[:format] || :html).to_s
+      format = (params[:format] || :html).to_s
       ActiveSupport::StringInquirer.new(format)
     end
     
