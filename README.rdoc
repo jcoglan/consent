@@ -22,6 +22,17 @@ to <tt>SiteController#hello</tt> to only use Ajax:
 
   site.hello { request.xhr? }
 
+Consent also adds some helpers to your controllers and routes file. To keep your routes
+working, you need to remove the +map+ parameter in <tt>config/routes.rb</tt>. So:
+
+  # in config/routes.rb
+  
+  # replace
+  ActionController::Routing::Routes.draw do |map|
+  
+  # with
+  ActionController::Routing::Routes.draw do
+
 
 === Request expressions
 
