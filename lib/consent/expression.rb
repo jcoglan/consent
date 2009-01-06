@@ -19,7 +19,7 @@ module Consent
     end
     
     def *(expression)
-      @params[:format] = expression.instance_eval { @controller }
+      @format = expression.instance_eval { @controller }
       Rule.push(@description.rules, self, expression.block) if expression.block
       expression.destroy!
       self
@@ -29,8 +29,12 @@ module Consent
       @controller = "#{ name }/#{ @controller }"
     end
     
+    def verb=(verb)
+      @verb = verb
+    end
+    
     def method_missing(name, params = {}, &block)
-      @params[:format] = name.to_s if @action
+      @format = name.to_s if @action
       @action ||= name.to_s
       @params.update(params)
       Rule.push(@description.rules, self, block) if block_given?
@@ -42,7 +46,8 @@ module Consent
       
       return false if (@controller != p[:controller].to_s)      or
                       (@action and @action != p[:action].to_s)  or
-                      (@verb and !req.__send__("#{ @verb }?"))
+                      (@verb and !req.__send__("#{ @verb }?"))  or
+                      (@format and @format != p[:format].to_s)
       
       @params.all? do |key, value|
         (value == p[key])  || (value == p[key].to_s) ||
@@ -50,15 +55,20 @@ module Consent
       end
     end
     
-    def verb=(verb)
-      @verb = verb
-    end
-    
     def to_h
       options = {:controller => @controller}
       options[:action] = @action if @action
       options.update(@params)
       options
+    end
+    
+    def inspect
+      source = @controller.dup
+      source << ".#{ @action }" if @action
+      source << "(#{ @params.map { |k,v| ":#{k} => #{v.inspect}" } * ', ' })" unless @params.empty?
+      source << "#{ @action ? '.' : '*' }#{ @format }" if @format
+      source = "#{ @verb }(#{ source })" if @verb
+      source
     end
     
     def destroy!

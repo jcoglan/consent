@@ -26,6 +26,10 @@ module Consent
         each { |expr| expr.verb = verb }
       end
       
+      def inspect
+        collect { |expr| expr.inspect } * ' + '
+      end
+      
     private
       
       def generate_rules!(block)

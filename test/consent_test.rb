@@ -113,3 +113,26 @@ class AllowDenyTest < ActionController::TestCase
   end
 end
 
+module Generator
+  include Consent::Expression::Generator
+end
+
+class InspectTest < Test::Unit::TestCase
+  include Generator
+  
+  def test_expressions
+    assert_equal "users",                               users.inspect
+    assert_equal "profiles.create",                     profiles.create.inspect
+    assert_equal "tags.list.json",                      tags.list.json.inspect
+    assert_equal "posts*xml",                           (posts * xml).inspect
+    assert_equal "categories(:name => \"something\")",  categories(:name => "something").inspect
+    assert_equal "pages.search(:q => /foo/)",           pages.search(:q => /foo/).inspect
+    assert_equal "ajax/maps.markers.xml",               (ajax/maps.markers.xml).inspect
+    assert_equal "space/users(:id => 1..5)*txt",        (space/users(:id => 1..5)*txt).inspect
+    
+    expr = posts * xml
+    expr.verb = :put
+    assert_equal "put(posts*xml)", expr.inspect
+  end
+end
+
