@@ -10,7 +10,7 @@ Consent::RULES_FILE = File.dirname(__FILE__) + '/rules.rb'
 class ConsentTest < ActionController::TestCase
   tests SiteController
   
-  test "allowed" do
+  def test_allowed
     get :hello and assert_response :success
     get :hello, :format => :xml, :name => "rss" and assert_response :success
     get :goodbye, :id => 10 and assert_response :success
@@ -23,12 +23,12 @@ class ConsentTest < ActionController::TestCase
     get :hello, :env => "dev" and assert_response :success
   end
   
-  test "redirected" do
+  def test_redirected
     get :redirector
     assert_redirected_to :controller => "ajax/maps", :action => :find
   end
   
-  test "denied" do
+  def test_denied
     get :hello, :format => :xml, :name => "rdf" and assert_response 403
     get :goodbye, :format => :json and assert_response 403
     get :goodbye, :id => 12 and assert_response 403
@@ -48,7 +48,7 @@ end
 class HttpTest < ActionController::TestCase
   tests HttpController
   
-  test "allowed" do
+  def test_allowed
     get :index and assert_response :success
     get :index, :id => "allowed" and assert_response :success
     post :update and assert_response :success
@@ -57,12 +57,12 @@ class HttpTest < ActionController::TestCase
     delete :delete and assert_response :success
   end
   
-  test "redirected" do
+  def test_redirected
     get :index, :user => "some guy"
     assert_redirected_to :controller => :site, :action => :index
   end
   
-  test "denied" do
+  def test_denied
     get :index, :id => "fubar" and assert_response 403
     post :index and assert_response 403
     get :update, :name => "duff" and assert_response 403
@@ -75,17 +75,17 @@ end
 class AjaxTest < ActionController::TestCase
   tests Ajax::MapsController
   
-  test "allowed" do
+  def test_allowed
     get :find and assert_response :success
     get :find, :id => 'anything' and assert_response :success
   end
   
-  test "redirected" do
+  def test_redirected
     get :find, :user => "special"
     assert_redirected_to :controller => :site, :action => :hello, :username => "special"
   end
   
-  test "denied" do
+  def test_denied
     post :find and assert_response 403
     get :find, :id => 'fubar' and assert_response 403
     get :find, :id => 'stop' and assert_response 403
@@ -96,7 +96,7 @@ end
 class AllowDenyTest < ActionController::TestCase
   tests AllowDenyController
   
-  test "allowed" do
+  def test_allowed
     get :first, :id => "foo" and assert_response :success
     get :second, :id => "anything" and assert_response :success
     get :third, :id => "start" and assert_response :success
@@ -107,18 +107,14 @@ class AllowDenyTest < ActionController::TestCase
     get :second, :id => "block" and assert_response :success
   end
   
-  test "denied" do
+  def test_denied
     get :third, :id => "stop" and assert_response 403
     get :fourth, :id => "something" and assert_response 403
   end
 end
 
-module Generator
-  include Consent::Expression::Generator
-end
-
 class InspectTest < Test::Unit::TestCase
-  include Generator
+  include Module.new { include Consent::Expression::Generator }
   
   def test_expressions
     assert_equal "users",                               users.inspect

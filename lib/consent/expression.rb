@@ -57,7 +57,7 @@ module Consent
     
     def to_h
       options = {:controller => @controller}
-      options[:action] = @action if @action
+      options[:action] = @action || :index
       options.update(@params)
       options
     end
