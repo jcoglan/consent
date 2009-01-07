@@ -39,7 +39,7 @@ Consent.rules do
   end
   
   ajax/maps.find { params[:id] != 'cancel' }
-  ajax/maps.find(:user => 'special') { redirect site.hello(:username => 'special') }
+  ajax/maps.find(:user => 'special') { redirect site.hello(:username => 'special').xml }
   
   helper(:user) { params[:user].upcase }
   put site.hello { user == 'JCOGLAN' }

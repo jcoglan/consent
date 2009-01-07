@@ -82,7 +82,10 @@ class AjaxTest < ActionController::TestCase
   
   def test_redirected
     get :find, :user => "special"
-    assert_redirected_to :controller => :site, :action => :hello, :username => "special"
+    assert_redirected_to :controller => :site,
+                         :action => :hello,
+                         :username => "special",
+                         :format => :xml
   end
   
   def test_denied

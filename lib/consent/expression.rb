@@ -45,6 +45,7 @@ module Consent
     def to_h
       options = {:controller => @controller}
       options[:action] = @action || :index
+      options[:format] = @format if @format
       options.update(@params)
       options
     end
