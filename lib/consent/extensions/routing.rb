@@ -30,7 +30,6 @@ module Consent
           end
           
           def @map.root(*args, &block)
-            puts args.inspect
             args[0] = args.first.to_h if Consent::Expression === args.first
             super(*args, &block)
           end
