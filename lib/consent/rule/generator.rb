@@ -15,7 +15,7 @@ module Consent
       end
       
       %w(get post put head delete).each do |verb|
-        class_eval <<-EOS
+        module_eval <<-EOS
           def #{verb}(*exprs, &block)
             group = exprs.inject { |grp, exp| grp + exp }
             group.verb = :#{verb}
