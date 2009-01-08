@@ -123,6 +123,7 @@ class ThrottleTest < ActionController::TestCase
     Consent.flush_throttles!
     get :throttled and assert_response :success
     get :throttled and assert_response :success
+    get :hello and assert_response :success
     get :throttled and assert_response :success
     
     get :throttled and assert_response 403
