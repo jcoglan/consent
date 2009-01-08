@@ -24,7 +24,7 @@ module Consent
       rescue AllowException
         true
       rescue RedirectException => re
-        re.params
+        {:redirect => re.params}
       end
       
       @throttles = context.throttles.map do |key, rate|

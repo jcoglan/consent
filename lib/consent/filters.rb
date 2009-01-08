@@ -5,7 +5,10 @@ module Consent
     def check_access_using_consent
       result = Consent.allows?(self)
       render(DENIAL_RESPONSE) and return false if result == false
-      redirect_to(result) and return false if Hash === result
+      if Hash === result
+        redirect_to(result[:redirect]) and return false if result[:redirect]
+        render(result[:render]) and return false if result[:render]
+      end
     end
     
   end
