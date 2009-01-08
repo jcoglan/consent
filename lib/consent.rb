@@ -41,5 +41,10 @@ module Consent
     true
   end
   
+  def self.flush_throttles!
+    return if @rules.nil?
+    @rules.each { |rule| rule.flush_throttles! }
+  end
+  
 end
 

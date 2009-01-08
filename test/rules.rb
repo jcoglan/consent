@@ -18,6 +18,11 @@ Consent.rules do
     false
   end
   
+  site.throttled do
+    throttle params[:username], 3.per_second
+    deny if params[:ignore]
+  end
+  
   site.hello                        +
   (site.goodbye(:name => 'Jimmy')   +
   ajax/maps.find)                   +

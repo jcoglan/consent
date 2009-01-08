@@ -12,5 +12,9 @@ class SiteController < ApplicationController
     redirect_to ajax/maps.find
   end
   
+  def throttled
+    render :text => 'You got through!'
+  end
+  
 end
 

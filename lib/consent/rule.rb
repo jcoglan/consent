@@ -4,11 +4,11 @@ module Consent
   class Rule
     
     extend Forwardable
-    def_delegator(:@expression, :inspect)
+    def_delegators(:@request, :inspect, :flush_throttles!)
     
     def initialize(expression, block)
-      @expression, @predicate = expression, block
-      @expression.add_observer(self)
+      @request, @predicate = Request.new(expression), block
+      @request.add_observer(self)
     end
     
     def line_number
@@ -17,13 +17,23 @@ module Consent
     
     def check(context)
       return true unless applies?(context)
-      context.instance_eval(&@predicate) != false
-    rescue DenyException
-      false
-    rescue AllowException
-      true
-    rescue RedirectException => re
-      re.params
+      result = begin
+        context.instance_eval(&@predicate) != false
+      rescue DenyException
+        false
+      rescue AllowException
+        true
+      rescue RedirectException => re
+        re.params
+      end
+      
+      context.throttles.each do |key, rate|
+        @request.throttle!(key, rate)
+        @request.ping!(key) if result == true
+        result = false if @request.over_capacity?(key)
+      end
+      
+      result
     end
     
     def update(message)
@@ -33,7 +43,7 @@ module Consent
   private
     
     def applies?(context)
-      !@invalid and @expression === context
+      !@invalid and @request === context
     end
     
   end

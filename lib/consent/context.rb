@@ -5,6 +5,7 @@ module Consent
   class Context
     
     include Expression::Generator
+    attr_reader :throttles
     
     extend Forwardable
     def_delegators(:@controller, :request, :params, :session, :logger)
@@ -12,6 +13,7 @@ module Consent
     
     def initialize(controller)
       @controller = controller
+      @throttles  = {}
     end
     
     def deny
@@ -24,6 +26,10 @@ module Consent
     
     def redirect(expression)
       raise RedirectException.new(expression)
+    end
+    
+    def throttle(key, rate)
+      @throttles[key.to_s] = rate
     end
     
     %w(development production test).each do |env|

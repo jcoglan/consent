@@ -116,6 +116,44 @@ class AllowDenyTest < ActionController::TestCase
   end
 end
 
+class ThrottleTest < ActionController::TestCase
+  tests SiteController
+  
+  def test_throttling
+    Consent.flush_throttles!
+    get :throttled and assert_response :success
+    get :throttled and assert_response :success
+    get :throttled and assert_response :success
+    
+    get :throttled and assert_response 403
+    
+    get :throttled, :username => "twitter" and assert_response :success
+    get :throttled, :username => "twitter" and assert_response :success
+    get :throttled, :username => "twitter" and assert_response :success
+    
+    get :throttled, :username => "twitter" and assert_response 403
+    
+    sleep 1.5
+    get :throttled and assert_response :success
+    get :throttled, :username => "twitter" and assert_response :success
+  end
+  
+  def test_dont_throttled_failed_requests
+    Consent.flush_throttles!
+    get :throttled and assert_response :success
+    get :throttled and assert_response :success
+    
+    get :throttled, :ignore => 1 and assert_response 403
+    get :throttled, :ignore => 1 and assert_response 403
+    
+    get :throttled and assert_response :success
+    get :throttled and assert_response 403
+    
+    Consent.flush_throttles!
+    get :throttled and assert_response :success
+  end
+end
+
 class InspectTest < Test::Unit::TestCase
   include Module.new { include Consent::Expression::Generator }
   
