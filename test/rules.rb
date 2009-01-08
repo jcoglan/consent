@@ -18,10 +18,8 @@ Consent.rules do
     false
   end
   
-  site.throttled do
-    throttle params[:username], 3.per_second
-    deny if params[:ignore]
-  end
+  site.throttled { throttle params[:username], 3.per_second }
+  site.throttled { deny if params[:ignore] }
   
   site.hello                        +
   (site.goodbye(:name => 'Jimmy')   +

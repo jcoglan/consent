@@ -17,7 +17,7 @@ module Consent
       
       def over_capacity?
         flush!
-        @times.size > @rate.limit
+        @times.size >= @rate.limit
       end
       
       def flush!

@@ -24,7 +24,8 @@ module Consent
     load RULES_FILE if RAILS_ENV == "development" or @rules.nil?
     return true if @rules.nil?
     
-    ctx = Context.new(controller)
+    ctx, status = Context.new(controller), true
+    
     @rules.each do |rule|
       result = rule.check(ctx)
       next if result == true
@@ -33,12 +34,13 @@ module Consent
       ctx.log(  "                   BLOCKED") if result == false
       ctx.log(  "                   REDIRECTED to #{ Expression.from_hash(result).inspect }") if Hash === result
       ctx.log(  "                   rule: #{ rule.line_number }")
-      
       ctx.log("\n")
       
-      return result
+      status = result
     end
-    true
+    
+    @rules.each { |rule| rule.ping!(ctx) } if status == true
+    status
   end
   
   def self.flush_throttles!

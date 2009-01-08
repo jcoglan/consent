@@ -11,8 +11,8 @@ module Consent
       @request.add_observer(self)
     end
     
-    def line_number
-      @predicate.inspect.scan(/@.*>/).first[1...-1]
+    def update(message)
+      @invalid = true if message == :destroyed
     end
     
     def check(context)
@@ -27,17 +27,22 @@ module Consent
         re.params
       end
       
-      context.throttles.each do |key, rate|
-        @request.throttle!(key, rate)
-        @request.ping!(key) if result == true
+      @throttles = context.throttles.map do |key, rate|
+        throttle = @request.throttle!(key, rate)
         result = false if @request.over_capacity?(key)
+        throttle
       end
       
       result
     end
     
-    def update(message)
-      @invalid = true if message == :destroyed
+    def ping!(context)
+      return if @throttles.nil? or !applies?(context)
+      @throttles.each { |thr| thr.ping! }
+    end
+    
+    def line_number
+      @predicate.inspect.scan(/@.*>/).first[1...-1]
     end
     
     def inspect

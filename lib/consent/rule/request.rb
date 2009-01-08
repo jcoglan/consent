@@ -13,8 +13,9 @@ module Consent
       end
       
       def throttle!(key, rate)
-        @throttles[key.to_s] ||= Throttle.new
-        @throttles[key.to_s].rate = rate
+        throttle = (@throttles[key.to_s] ||= Throttle.new)
+        throttle.rate = rate
+        throttle
       end
       
       def ping!(key)
