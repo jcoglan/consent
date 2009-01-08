@@ -8,10 +8,13 @@ rules you've set. Think of it as a firewall that sits between your routes file a
 controller logic.
 
 
-== Examples
+== Installation
 
-On installation, Consent adds a file to your app at config/consent.rb. This file is where you
-write the access control rules for your application. You should see a block beginning:
+  ruby script/plugin install git://github.com/jcoglan/consent.git
+
+On installation, Consent adds a file to your app at <tt>config/consent.rb</tt>. This file
+is where you write the access control rules for your application. You should see a block
+beginning:
 
   Consent.rules do
 
@@ -21,6 +24,8 @@ request expression, and a block that should return +true+ if the request is allo
 to <tt>SiteController#hello</tt> to only use Ajax:
 
   site.hello { request.xhr? }
+
+Writing rules is covered in some detail below.
 
 Consent also adds some helpers to your controllers and routes file. To keep your routes
 working, you need to remove the +map+ parameter in <tt>config/routes.rb</tt>. So:
@@ -33,13 +38,27 @@ working, you need to remove the +map+ parameter in <tt>config/routes.rb</tt>. So
   # with
   ActionController::Routing::Routes.draw do
 
+Finally, add the Consent +before_filter+ to the top of your <tt>ApplicationController</tt>
+to enable the Consent firewall for incoming requests:
 
-=== Request expressions
+  # in app/controllers/application.rb
+  
+  class ApplicationController < ActionController::Base
+    before_filter :check_access_using_consent
+    
+    # other filters, settings, etc...
+  end
+
+
+== Request expressions
 
 The first part of any rule is called the expression list. This is a snippet of Ruby
 code that is used to match requests to the controllers in your application. The expression
 language allows for matching of controllers, actions, parameters, response formats and
 HTTP methods, and provides a declarative method for referring to your app's actions.
+
+
+=== Expression grammar
 
 The basic grammar for expression lists is:
 
@@ -88,7 +107,7 @@ requests to <tt>TagsController</tt> and <tt>SiteController#hello</tt>:
   users + post(profiles.update) + put(tags + site.hello)
 
 
-=== Decision blocks
+== Decision blocks
 
 Decision blocks always appear at the end of a rule, and should return +true+ if the request
 is allowed and +false+ if it should be denied. Within the block, you have access to the
@@ -157,7 +176,7 @@ is allowed:
   end
 
 
-=== Helper methods
+== Helper methods
 
 To make it easier to write clean rules and reduce repetition, Consent allows you to define
 helper methods in the rule block that you can then use within rules to make decisions. For
@@ -185,7 +204,7 @@ rule will do just that:
   debug { development? }
 
 
-=== Extra: request expressions aren't just for your <tt>consent.rb</tt>
+== Extra: request expressions aren't just for your <tt>consent.rb</tt>
 
 For the sake of being extra specially helpful, Consent gives you the ability to use the
 request expression language described above in your controllers, and in your routes file.
