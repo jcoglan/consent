@@ -16,5 +16,9 @@ class SiteController < ApplicationController
     render :text => 'You got through!'
   end
   
+  def bm
+    render :text => 'bm'
+  end
+  
 end
 

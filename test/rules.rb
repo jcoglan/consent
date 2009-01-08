@@ -22,6 +22,8 @@ Consent.rules do
   site.throttled { throttle params[:u], 3.per_second }
   site.throttled { deny if params[:ignore] }
   
+  site.bm { throttle :all, 5.per_second if params[:user] == 'banned' }
+  
   site.hello                        +
   (site.goodbye(:name => 'Jimmy')   +
   ajax/maps.find)                   +

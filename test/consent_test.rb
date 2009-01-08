@@ -119,19 +119,18 @@ end
 class ThrottleTest < ActionController::TestCase
   tests SiteController
   
-  def test_throttling
+  def setup
     Consent.flush_throttles!
-    get :throttled and assert_response :success
-    get :throttled and assert_response :success
+  end
+  
+  def test_throttling
+    2.times { get :throttled and assert_response :success }
     get :hello and assert_response :success
     get :throttled and assert_response :success
     
     get :throttled and assert_response 403
     
-    get :throttled, :u => "twitter" and assert_response :success
-    get :throttled, :u => "twitter" and assert_response :success
-    get :throttled, :u => "twitter" and assert_response :success
-    
+    3.times { get :throttled, :u => "twitter" and assert_response :success }
     get :throttled, :u => "twitter" and assert_response 403
     
     sleep 1.5
@@ -140,22 +139,25 @@ class ThrottleTest < ActionController::TestCase
   end
   
   def test_throttle_allocation
-    Consent.flush_throttles!
-    get :throttled, :format => :json, :x => "foo" and assert_response :success
-    get :throttled, :format => :json, :x => "foo" and assert_response :success
-    get :throttled, :format => :json, :x => "foo" and assert_response :success
+    3.times { get :throttled, :format => :json, :x => "foo" and assert_response :success }
     get :throttled, :format => :json, :x => "foo" and assert_response 403
     get :hello,     :format => :json, :x => "bar" and assert_response :success
     get :throttled, :format => :json, :u => "foo" and assert_response :success
   end
   
-  def test_dont_throttled_failed_requests
-    Consent.flush_throttles!
-    get :throttled and assert_response :success
-    get :throttled and assert_response :success
+  def test_selective_throttling
+    10.times { get :bm and assert_response :success }
     
-    get :throttled, :ignore => 1 and assert_response 403
-    get :throttled, :ignore => 1 and assert_response 403
+    5.times { get :bm, :user => "banned" and assert_response :success }
+    get :bm, :user => "banned" and assert_response 403
+    
+    get :bm and assert_response :success
+  end
+  
+  def test_dont_throttle_failed_requests
+    2.times { get :throttled and assert_response :success }
+    
+    2.times { get :throttled, :ignore => 1 and assert_response 403 }
     
     get :throttled and assert_response :success
     get :throttled and assert_response 403
