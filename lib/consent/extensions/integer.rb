@@ -10,6 +10,10 @@ module Consent
         end
       end
       
+      def per(interval)
+        Rate.new(self, interval)
+      end
+      
     end
   end
   
