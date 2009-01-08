@@ -4,7 +4,7 @@ module Consent
   class Rule
     
     extend Forwardable
-    def_delegators(:@request, :inspect, :flush_throttles!)
+    def_delegators(:@request, :flush_throttles!)
     
     def initialize(expression, block)
       @request, @predicate = Request.new(expression), block
@@ -38,6 +38,12 @@ module Consent
     
     def update(message)
       @invalid = true if message == :destroyed
+    end
+    
+    def inspect
+      source = @request.inspect
+      source << '#invalid' if @invalid
+      source
     end
     
   private
