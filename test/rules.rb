@@ -18,7 +18,8 @@ Consent.rules do
     false
   end
   
-  site.throttled { throttle params[:username], 3.per_second }
+  site*json { throttle params[:x], 3.per_second }
+  site.throttled { throttle params[:u], 3.per_second }
   site.throttled { deny if params[:ignore] }
   
   site.hello                        +

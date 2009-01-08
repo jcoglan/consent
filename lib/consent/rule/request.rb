@@ -18,24 +18,8 @@ module Consent
         throttle
       end
       
-      def ping!(key)
-        throttle = throttle_for(key)
-        throttle.ping! if throttle
-      end
-      
-      def over_capacity?(key)
-        throttle = throttle_for(key)
-        throttle && throttle.over_capacity?
-      end
-      
       def flush_throttles!
         @throttles = {}
-      end
-      
-    private
-      
-      def throttle_for(key)
-        @throttles[key.to_s]
       end
       
     end

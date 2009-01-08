@@ -17,6 +17,8 @@ module Consent
     
     def check(context)
       return true unless applies?(context)
+      context.clear_throttles!
+      
       result = begin
         context.instance_eval(&@predicate) != false
       rescue DenyException
@@ -29,7 +31,7 @@ module Consent
       
       @throttles = context.throttles.map do |key, rate|
         throttle = @request.throttle!(key, rate)
-        result = false if @request.over_capacity?(key)
+        result = false if throttle.over_capacity?
         throttle
       end
       

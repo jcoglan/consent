@@ -13,7 +13,7 @@ module Consent
     
     def initialize(controller)
       @controller = controller
-      @throttles  = {}
+      clear_throttles!
     end
     
     def deny
@@ -30,6 +30,10 @@ module Consent
     
     def throttle(key, rate)
       @throttles[key.to_s] = rate
+    end
+    
+    def clear_throttles!
+      @throttles = {}
     end
     
     %w(development production test).each do |env|

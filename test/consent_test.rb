@@ -128,15 +128,25 @@ class ThrottleTest < ActionController::TestCase
     
     get :throttled and assert_response 403
     
-    get :throttled, :username => "twitter" and assert_response :success
-    get :throttled, :username => "twitter" and assert_response :success
-    get :throttled, :username => "twitter" and assert_response :success
+    get :throttled, :u => "twitter" and assert_response :success
+    get :throttled, :u => "twitter" and assert_response :success
+    get :throttled, :u => "twitter" and assert_response :success
     
-    get :throttled, :username => "twitter" and assert_response 403
+    get :throttled, :u => "twitter" and assert_response 403
     
     sleep 1.5
     get :throttled and assert_response :success
-    get :throttled, :username => "twitter" and assert_response :success
+    get :throttled, :u => "twitter" and assert_response :success
+  end
+  
+  def test_throttle_allocation
+    Consent.flush_throttles!
+    get :throttled, :format => :json, :x => "foo" and assert_response :success
+    get :throttled, :format => :json, :x => "foo" and assert_response :success
+    get :throttled, :format => :json, :x => "foo" and assert_response :success
+    get :throttled, :format => :json, :x => "foo" and assert_response 403
+    get :hello,     :format => :json, :x => "bar" and assert_response :success
+    get :throttled, :format => :json, :u => "foo" and assert_response :success
   end
   
   def test_dont_throttled_failed_requests
