@@ -1,18 +1,25 @@
-require 'forwardable'
-
 module Consent
   class Rule
     
-    extend Forwardable
-    def_delegators(:@request, :flush_throttles!)
-    
     def initialize(expression, block)
-      @request, @predicate = Request.new(expression), block
-      @request.add_observer(self)
+      @expression, @predicate = expression, block
+      @expression.add_observer(self)
+      flush_throttles!
     end
     
     def update(message)
       @invalid = true if message == :destroyed
+    end
+    
+    def flush_throttles!
+      @throttles.each { |key, thr| thr.flush! } if @throttles
+      @throttles = {}
+    end
+    
+    def throttle!(key, rate)
+      throttle = (@throttles[key.to_s] ||= Throttle.new)
+      throttle.rate = rate
+      throttle
     end
     
     def check(context)
@@ -29,10 +36,9 @@ module Consent
         {:redirect => re.params}
       end
       
-      @throttles = context.throttles.map do |key, rate|
-        throttle = @request.throttle!(key, rate)
+      context.throttles.each do |key, rate|
+        throttle = throttle!(key, rate)
         result = false if throttle.over_capacity?
-        throttle
       end
       
       result
@@ -40,7 +46,7 @@ module Consent
     
     def ping!(context)
       return if @throttles.nil? or !applies?(context)
-      @throttles.each { |thr| thr.ping! }
+      @throttles.each { |key, thr| thr.ping! }
     end
     
     def line_number
@@ -48,7 +54,7 @@ module Consent
     end
     
     def inspect
-      source = @request.inspect
+      source = @expression.inspect
       source << '#invalid' if @invalid
       source
     end
@@ -56,7 +62,7 @@ module Consent
   private
     
     def applies?(context)
-      !@invalid and @request === context
+      !@invalid and @expression === context
     end
     
   end
