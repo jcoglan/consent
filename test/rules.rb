@@ -18,7 +18,10 @@ Consent.rules do
     false
   end
   
-  site*json { throttle params[:x], 3.per_second }
+  site*json do
+    throttle params[:x], 3.per_second
+    throttle "extra: #{ params[:x] }", 3.per_second
+  end
   site.throttled { throttle params[:u], 3.per_second }
   site.throttled { deny if params[:ignore] }
   

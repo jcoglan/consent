@@ -17,7 +17,7 @@ module Consent
     end
     
     def throttle!(key, rate)
-      throttle = (@throttles[key.to_s] ||= Throttle.new)
+      throttle = (@throttles[key.to_s] ||= Throttle.new(inspect, key))
       throttle.rate = rate
       throttle
     end

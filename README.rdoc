@@ -228,9 +228,7 @@ a blanket rule for all users.
 
 Also note that at present Consent stores request history in memory, so memory usage will
 increase if you use long time periods. This feature has not been load-tested in production
-yet, but if people report problems I'll consider storing requests in SQLite. The other
-side-effect of in-memory storage is that the history is lost if you restart your app, but
-I'm working on a solution to that.
+yet, but if people report problems I'll consider storing requests in SQLite.
 
 
 == Helper methods
