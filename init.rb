@@ -9,11 +9,15 @@ class ::Integer
 end
 
 class ::ApplicationController
-  include Consent::Extensions::Controller
+  include Consent::Extensions::UrlHelper
   include Consent::Filters
 end
 
 class ::ActionController::Routing::RouteSet
   include Consent::Extensions::Routing
+end
+
+class ::ActionView::Base
+  include Consent::Extensions::UrlHelper
 end
 
