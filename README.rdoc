@@ -262,19 +262,21 @@ rule will do just that:
 == Extra: request expressions aren't just for your <tt>consent.rb</tt>
 
 For the sake of being extra specially helpful, Consent gives you the ability to use the
-request expression language described above in your controllers, and in your routes file.
-For example, you can map a route like so:
+request expression language described above in your controllers, views, and in your routes
+file. For example, you can map a route like so:
 
   # Shorthand expression for
   # map.connect "foo", :controller => "tags", :action => "list", :format => "xml"
   
   map.connect "foo", tags.list.xml
 
-Or, you can use expressions with +redirect_to+ in controller code:
+Or, you can use expressions with methods that expect URLs in controllers and views:
 
   # Redirects to :controller => "users", :action => "create", :name => "jcoglan"
-  
   redirect_to users.create(:name => "jcoglan")
+  
+  # Opens a form whose action is :controller => "posts", :action => "update"
+  form_for :post, :url => posts.update
 
 These expressions make heavy use of +method_missing+ and operator overloading, so if you
 really care about performance or you find they cause any other problems, go into this
