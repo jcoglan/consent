@@ -1,6 +1,8 @@
 require File.dirname(__FILE__) + '/lib/consent'
 
-require RAILS_ROOT + '/app/controllers/application'
+app = RAILS_ROOT + '/app/controllers/application'
+controller = app + '_controller'
+require File.file?(controller + '.rb') ? controller : app
 
 class ::Integer
   include Consent::Extensions::Integer
