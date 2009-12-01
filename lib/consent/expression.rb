@@ -42,6 +42,20 @@ module Consent
       @verb = verb.to_s
     end
     
+    def ===(context)
+      p, req = context.params, context.request
+      
+      return false if (@controller != p[:controller].to_s)     or
+                      (@action and @action != p[:action].to_s) or
+                      (@verb and !req.__send__("#{ @verb }?")) or
+                      (@format and @format != p[:format].to_s)
+      
+      @params.all? do |key, value|
+        (value == p[key]) || (value == p[key].to_s) ||
+        (value === p[key]) || (value === p[key].to_i)
+      end
+    end
+    
     def to_h
       options = {:controller => @controller}
       options[:action] = @action || :index

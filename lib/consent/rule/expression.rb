@@ -34,20 +34,6 @@ module Consent
         @env.rules << Rule.new(self, block)
       end
       
-      def ===(context)
-        p, req = context.params, context.request
-        
-        return false if (@controller != p[:controller].to_s)     or
-                        (@action and @action != p[:action].to_s) or
-                        (@verb and !req.__send__("#{ @verb }?")) or
-                        (@format and @format != p[:format].to_s)
-        
-        @params.all? do |key, value|
-          (value == p[key]) || (value == p[key].to_s) ||
-          (value === p[key]) || (value === p[key].to_i)
-        end
-      end
-      
       class Group < Consent::Expression::Group
         attr_reader :block
         
